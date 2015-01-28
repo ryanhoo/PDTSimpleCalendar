@@ -386,7 +386,7 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    CGFloat itemWidth = (floorf(self.bounds.size.width - PDTSimpleCalendarFlowLayoutInsetLeft - PDTSimpleCalendarFlowLayoutInsetRight) / self.daysPerWeek);
+    CGFloat itemWidth = (floorf(self.frame.size.width - PDTSimpleCalendarFlowLayoutInsetLeft - PDTSimpleCalendarFlowLayoutInsetRight) / self.daysPerWeek) - 1;
     
     return CGSizeMake(itemWidth, itemWidth);
 }

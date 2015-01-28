@@ -75,4 +75,13 @@
     // [super layoutSubviews];
 }
 
+- (void)setWeekDayViewsColor:(UIColor *)color font:(UIFont *)font{
+    for (UILabel *view in self.subviews) {
+        if (color)
+            view.textColor = color;
+        if (font)
+            view.font = font;
+    }
+}
+
 @end

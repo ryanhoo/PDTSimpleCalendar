@@ -10,4 +10,6 @@
 
 @interface PDTSimpleCalendarWeekDayView : UIView
 
+- (void)setWeekDayViewsColor:(UIColor *)color font:(UIFont *)font;
+
 @end

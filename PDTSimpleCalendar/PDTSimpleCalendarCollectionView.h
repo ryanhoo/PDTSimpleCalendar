@@ -45,6 +45,8 @@
  */
 @property (nonatomic, strong) NSDate *selectedDate;
 
+@property (nonatomic, strong) NSArray *markedDates;
+
 /** @name Customizing Appearance */
 
 /**

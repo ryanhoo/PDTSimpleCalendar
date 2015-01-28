@@ -213,10 +213,40 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
     NSIndexPath *indexPath = [self indexPathForCellAtDate:_selectedDate];
     [self reloadItemsAtIndexPaths:@[ indexPath ]];
     
-    //Notify the delegate
-    if ([self.delegate respondsToSelector:@selector(simpleCalendarViewController:didSelectDate:)]) {
-        [self.delegate simpleCalendarViewController:self didSelectDate:self.selectedDate];
+    // Notify the delegate
+//    if ([self.delegate respondsToSelector:@selector(simpleCalendarViewController:didSelectDate:)]) {
+//        [self.delegate simpleCalendarViewController:self didSelectDate:self.selectedDate];
+//    }
+}
+
+- (void)setMarkedDates:(NSArray *)markedDates
+{
+    if (_markedDates) {
+        for (NSDate *date in _markedDates) {
+            [self setDate:date mark:NO];
+        }
     }
+    
+    for (NSDate *date in markedDates) {
+        [self setDate:date mark:YES];
+    }
+    _markedDates = markedDates;
+}
+
+- (void)setDate:(NSDate *)date mark:(BOOL) isMarked
+{
+    //Test if selectedDate between first & last date
+    NSDate *startOfDay = [self clampDate:date toComponents:NSDayCalendarUnit|NSMonthCalendarUnit|NSYearCalendarUnit];
+    if (([startOfDay compare:self.firstDateMonth] == NSOrderedAscending) || ([startOfDay compare:self.lastDateMonth] == NSOrderedDescending)) {
+        //the newSelectedDate is not between first & last date of the calendar, do nothing.
+        return;
+    }
+    
+    [[self cellForItemAtDate:date] setIsMarked:isMarked];
+    
+//    NSIndexPath *indexPath = [self indexPathForCellAtDate:date];
+//    [self reloadItemsAtIndexPaths:@[ indexPath ]];
+    [self reloadData];
 }
 
 //Deprecated, You need to use setSelectedDate: and call scrollToDate:animated: or scrollToSelectedDate:animated:
@@ -273,8 +303,7 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
     //Each Section is a Month
-//    return [self.calendar components:NSMonthCalendarUnit fromDate:self.firstDateMonth toDate:self.lastDateMonth options:0].month + 1;
-    return self.daysPerWeek;
+    return [self.calendar components:NSMonthCalendarUnit fromDate:self.firstDateMonth toDate:self.lastDateMonth options:0].month + 1;
 }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
@@ -302,10 +331,12 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
     BOOL isToday = NO;
     BOOL isSelected = NO;
     BOOL isCustomDate = NO;
+    BOOL isMarked = NO;
     
     if (cellDateComponents.month == firstOfMonthsComponents.month) {
         isSelected = ([self isSelectedDate:cellDate] && (indexPath.section == [self sectionForDate:cellDate]));
         isToday = [self isTodayDate:cellDate];
+        isMarked = [self isMarkedDate:cellDate];
         [cell setDate:cellDate calendar:self.calendar];
         
         //Ask the delegate if this date should have specific colors.
@@ -322,9 +353,13 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
         [cell setIsToday:isToday];
     }
     
-    if (isSelected) {
+//    if (isSelected) {
         [cell setSelected:isSelected];
-    }
+//    }
+    
+//    if (isMarked) {
+        [cell setIsMarked:isMarked];
+//    }
     
     //If the current Date is not enabled, or if the delegate explicitely specify custom colors
     if (![self isEnabledDate:cellDate] || isCustomDate) {
@@ -410,6 +445,19 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
         return NO;
     }
     return [self clampAndCompareDate:date withReferenceDate:self.selectedDate];
+}
+
+- (BOOL)isMarkedDate:(NSDate *)date
+{
+    if (self.markedDates) {
+        for (NSDate *markedDate in self.markedDates) {
+            if ([self clampAndCompareDate:markedDate withReferenceDate:date]) {
+                return YES;
+            }
+        }
+    }
+    
+    return NO;
 }
 
 - (BOOL)isEnabledDate:(NSDate *)date

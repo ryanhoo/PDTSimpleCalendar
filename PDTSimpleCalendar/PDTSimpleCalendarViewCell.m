@@ -87,7 +87,7 @@ const CGFloat PDTSimpleCalendarCircleSize = 32.0f;
         [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.dayLabel attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:PDTSimpleCalendarCircleSize]];
         [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.dayLabel attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:PDTSimpleCalendarCircleSize]];
 
-        [self setCircleColor:NO selected:NO];
+        [self setCircleColor:NO selected:NO marked:NO];
     }
 
     return self;
@@ -109,17 +109,22 @@ const CGFloat PDTSimpleCalendarCircleSize = 32.0f;
 - (void)setIsToday:(BOOL)isToday
 {
     _isToday = isToday;
-    [self setCircleColor:isToday selected:self.selected];
+    [self setCircleColor:isToday selected:self.selected marked:self.isMarked];
+}
+
+- (void)setIsMarked:(BOOL)isMarked
+{
+    _isMarked = isMarked;
+    [self setCircleColor:self.isToday selected:self.selected marked:isMarked];
 }
 
 - (void)setSelected:(BOOL)selected
 {
     [super setSelected:selected];
-    [self setCircleColor:self.isToday selected:selected];
+    [self setCircleColor:self.isToday selected:self.selected marked:self.isMarked];
 }
 
-
-- (void)setCircleColor:(BOOL)today selected:(BOOL)selected
+- (void)setCircleColor:(BOOL)today selected:(BOOL)selected marked:(BOOL)marked
 {
     UIColor *circleColor = (today) ? [self circleTodayColor] : [self circleDefaultColor];
     UIColor *labelColor = (today) ? [self textTodayColor] : [self textDefaultColor];
@@ -136,12 +141,29 @@ const CGFloat PDTSimpleCalendarCircleSize = 32.0f;
             }
         }
     }
-    
-    if (selected) {
-        circleColor = [self circleSelectedColor];
-        labelColor = [self textSelectedColor];
-    }
 
+//    if (selected) {
+//        circleColor = [self circleSelectedColor];
+//        labelColor = [self textSelectedColor];
+//    }
+//
+//    if (today) {
+//        circleColor =  [self circleTodayColor];
+//        labelColor = [self textTodayColor];
+//    } else
+        if (selected) {
+        circleColor =  [self circleSelectedColor];
+        labelColor = [self textSelectedColor];
+    } else if (marked){
+        circleColor = [self circleMarkdedColor];
+        labelColor = [self textMarkedColor];
+    }
+//    
+//    else {
+//        circleColor = [self circleDefaultColor];
+//        labelColor = [self textDefaultColor];
+//    }
+    
     [self.dayLabel setBackgroundColor:circleColor];
     [self.dayLabel setTextColor:labelColor];
 }
@@ -149,7 +171,7 @@ const CGFloat PDTSimpleCalendarCircleSize = 32.0f;
 
 - (void)refreshCellColors
 {
-    [self setCircleColor:self.isToday selected:self.isSelected];
+    [self setCircleColor:self.isToday selected:self.isSelected marked:self.isMarked];
 }
 
 
@@ -193,6 +215,19 @@ const CGFloat PDTSimpleCalendarCircleSize = 32.0f;
     return [UIColor grayColor];
 }
 
+- (UIColor *)circleMarkdedColor
+{
+    if(_circleMarkdedColor == nil) {
+        _circleMarkdedColor = [[[self class] appearance] circleMarkdedColor];
+    }
+    
+    if(_circleMarkdedColor != nil) {
+        return _circleMarkdedColor;
+    }
+    
+    return [UIColor grayColor];
+}
+
 - (UIColor *)circleSelectedColor
 {
     if(_circleSelectedColor == nil) {
@@ -231,6 +266,19 @@ const CGFloat PDTSimpleCalendarCircleSize = 32.0f;
         return _textTodayColor;
     }
 
+    return [UIColor whiteColor];
+}
+
+- (UIColor *)textMarkedColor
+{
+    if(_textMarkedColor == nil) {
+        _textMarkedColor = [[[self class] appearance] textMarkedColor];
+    }
+    
+    if(_textMarkedColor != nil) {
+        return _textMarkedColor;
+    }
+    
     return [UIColor whiteColor];
 }
 

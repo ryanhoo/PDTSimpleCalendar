@@ -70,6 +70,11 @@
 @property (nonatomic, assign) BOOL isToday;
 
 /**
+ *  Wether if the date is mark or not
+ */
+@property (nonatomic, assign) BOOL isMarked;
+
+/**
  *  Customize the circle behind the day's number color using UIAppearance.
  */
 @property (nonatomic, strong) UIColor *circleDefaultColor UI_APPEARANCE_SELECTOR;
@@ -78,6 +83,8 @@
  *  Customize the color of the circle for today's cell using UIAppearance.
  */
 @property (nonatomic, strong) UIColor *circleTodayColor UI_APPEARANCE_SELECTOR;
+
+@property (nonatomic, strong) UIColor *circleMarkdedColor UI_APPEARANCE_SELECTOR;
 
 /**
  *  Customize the color of the circle when cell is selected using UIAppearance.
@@ -93,6 +100,8 @@
  *  Customize today's number color using UIAppearance.
  */
 @property (nonatomic, strong) UIColor *textTodayColor UI_APPEARANCE_SELECTOR;
+
+@property (nonatomic, strong) UIColor *textMarkedColor UI_APPEARANCE_SELECTOR;
 
 /**
  *  Customize the day's number color when cell is selected using UIAppearance.

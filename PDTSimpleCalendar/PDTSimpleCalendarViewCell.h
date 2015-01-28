@@ -74,6 +74,8 @@
  */
 @property (nonatomic, assign) BOOL isMarked;
 
+@property (nonatomic, assign) BOOL isDisabled;
+
 /**
  *  Customize the circle behind the day's number color using UIAppearance.
  */

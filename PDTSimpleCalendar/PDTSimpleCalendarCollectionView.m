@@ -204,7 +204,6 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
         return;
     }
     
-    
     [[self cellForItemAtDate:_selectedDate] setSelected:NO];
     [[self cellForItemAtDate:startOfDay] setSelected:YES];
     
@@ -332,11 +331,14 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
     BOOL isSelected = NO;
     BOOL isCustomDate = NO;
     BOOL isMarked = NO;
+    BOOL isDisabled = self.defaultDateEnabled;
     
     if (cellDateComponents.month == firstOfMonthsComponents.month) {
         isSelected = ([self isSelectedDate:cellDate] && (indexPath.section == [self sectionForDate:cellDate]));
         isToday = [self isTodayDate:cellDate];
         isMarked = [self isMarkedDate:cellDate];
+        isDisabled = ![self isEnabledDate:cellDate];
+        
         [cell setDate:cellDate calendar:self.calendar];
         
         //Ask the delegate if this date should have specific colors.
@@ -360,6 +362,7 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
 //    if (isMarked) {
         [cell setIsMarked:isMarked];
 //    }
+    [cell setIsDisabled:isDisabled];
     
     //If the current Date is not enabled, or if the delegate explicitely specify custom colors
     if (![self isEnabledDate:cellDate] || isCustomDate) {
@@ -462,17 +465,32 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
 
 - (BOOL)isEnabledDate:(NSDate *)date
 {
-    NSDate *clampedDate = [self clampDate:date toComponents:(NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit)];
-    if (([clampedDate compare:self.firstDate] == NSOrderedAscending) || ([clampedDate compare:self.lastDate] == NSOrderedDescending)) {
-        return NO;
+    if (self.defaultDateEnabled)
+        return YES;
+    if (self.enabledDates) {
+        for (NSDate *enabledDate in self.enabledDates) {
+            if ([self clampAndCompareDate:enabledDate withReferenceDate:date]) {
+                return YES;
+            }
+        }
     }
     
-    if ([self.delegate respondsToSelector:@selector(simpleCalendarViewController:isEnabledDate:)]) {
-        return [self.delegate simpleCalendarViewController:self isEnabledDate:date];
-    }
-    
-    return YES;
+    return NO;
 }
+
+//- (BOOL)isEnabledDate:(NSDate *)date
+//{
+//    NSDate *clampedDate = [self clampDate:date toComponents:(NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit)];
+//    if (([clampedDate compare:self.firstDate] == NSOrderedAscending) || ([clampedDate compare:self.lastDate] == NSOrderedDescending)) {
+//        return NO;
+//    }
+//    
+//    if ([self.delegate respondsToSelector:@selector(simpleCalendarViewController:isEnabledDate:)]) {
+//        return [self.delegate simpleCalendarViewController:self isEnabledDate:date];
+//    }
+//    
+//    return YES;
+//}
 
 - (BOOL)clampAndCompareDate:(NSDate *)date withReferenceDate:(NSDate *)referenceDate
 {

@@ -47,6 +47,10 @@
 
 @property (nonatomic, strong) NSArray *markedDates;
 
+@property (nonatomic, strong) NSArray *enabledDates;
+
+@property (nonatomic, assign) BOOL defaultDateEnabled;
+
 /** @name Customizing Appearance */
 
 /**

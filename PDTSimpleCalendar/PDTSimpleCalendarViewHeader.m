@@ -21,6 +21,7 @@ const CGFloat PDTSimpleCalendarHeaderTextSize = 12.0f;
         [_titleLabel setFont:self.textFont];
         [_titleLabel setTextColor:self.textColor];
         [_titleLabel setBackgroundColor:[UIColor clearColor]];
+        [_titleLabel setTextAlignment:NSTextAlignmentCenter];
 
         [self addSubview:_titleLabel];
         [_titleLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -43,7 +44,6 @@ const CGFloat PDTSimpleCalendarHeaderTextSize = 12.0f;
 
     return self;
 }
-
 
 #pragma mark - Colors
 
@@ -85,6 +85,5 @@ const CGFloat PDTSimpleCalendarHeaderTextSize = 12.0f;
 
     return [UIColor lightGrayColor];
 }
-
 
 @end

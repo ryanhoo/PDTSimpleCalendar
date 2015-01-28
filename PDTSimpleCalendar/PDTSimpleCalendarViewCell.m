@@ -33,7 +33,6 @@ const CGFloat PDTSimpleCalendarCircleSize = 32.0f;
     return [PDTSimpleCalendarViewCell stringFromDate:date withDateFormatter:dateFormatter withCalendar:calendar];
 }
 
-
 + (NSDateFormatter *)dateFormatter {
     static NSDateFormatter *dateFormatter;
     static dispatch_once_t onceToken;
@@ -178,7 +177,7 @@ const CGFloat PDTSimpleCalendarCircleSize = 32.0f;
         return _circleDefaultColor;
     }
 
-    return [UIColor whiteColor];
+    return [UIColor clearColor];
 }
 
 - (UIColor *)circleTodayColor

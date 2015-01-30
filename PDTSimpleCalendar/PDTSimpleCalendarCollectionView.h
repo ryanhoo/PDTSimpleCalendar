@@ -99,6 +99,9 @@
  */
 - (void)scrollToDate:(NSDate *)date animated:(BOOL)animated;
 
+
++ (CGFloat)suggestedHeightForWidth:(CGFloat) width withHeaderHeight:(CGFloat)headerHeight;
+
 @end
 
 

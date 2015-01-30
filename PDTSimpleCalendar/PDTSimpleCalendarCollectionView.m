@@ -13,6 +13,9 @@
 #import "PDTSimpleCalendarWeekDayView.h"
 #import "PDTSimpleCalendarViewHeaderWithWeekDays.h"
 
+#define DAYS_PER_WEEK 7
+#define ROW_NUMBER_IN_SECTION 6
+
 static NSString *PDTSimpleCalendarViewCellIdentifier = @"com.producteev.collection.cell.identifier";
 static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collection.header.identifier";
 
@@ -90,7 +93,7 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
 
     self.backgroundColor = [UIColor whiteColor];
     self.overlayTextColor = [UIColor darkGrayColor];
-    self.daysPerWeek = 7;
+    self.daysPerWeek = DAYS_PER_WEEK;
     
     //Configure the Collection View
     [self registerClass:[PDTSimpleCalendarViewCell class] forCellWithReuseIdentifier:PDTSimpleCalendarViewCellIdentifier];
@@ -299,13 +302,14 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    NSDate *firstOfMonth = [self firstOfMonthForSection:section];
-    NSRange rangeOfWeeks = [self.calendar rangeOfUnit:NSWeekCalendarUnit inUnit:NSMonthCalendarUnit forDate:firstOfMonth];
+//    NSDate *firstOfMonth = [self firstOfMonthForSection:section];
+//    NSRange rangeOfWeeks = [self.calendar rangeOfUnit:NSWeekCalendarUnit inUnit:NSMonthCalendarUnit forDate:firstOfMonth];
     
     //We need the number of calendar weeks for the full months (it will maybe include previous month and next months cells)
-    return (rangeOfWeeks.length * self.daysPerWeek);
+//    NSInteger rows = (rangeOfWeeks.length * self.daysPerWeek);
+//    NSLog(@"the row number is %lu", rows);
+    return self.daysPerWeek * ROW_NUMBER_IN_SECTION;
 }
-
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -339,7 +343,9 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
         
         
     } else {
-        [cell setDate:nil calendar:nil];
+                [cell setDate:cellDate calendar:self.calendar];
+//        [cell setDate:nil calendar:nil];
+        [cell setIsDisabled:YES];
     }
     
     if (isToday) {
@@ -409,9 +415,13 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    CGFloat itemWidth = (floorf(self.frame.size.width - PDTSimpleCalendarFlowLayoutInsetLeft - PDTSimpleCalendarFlowLayoutInsetRight) / self.daysPerWeek) - 1;
-    
+    CGFloat itemWidth = (self.frame.size.width - PDTSimpleCalendarFlowLayoutInsetLeft - PDTSimpleCalendarFlowLayoutInsetRight) / self.daysPerWeek;
     return CGSizeMake(itemWidth, itemWidth);
+}
+
++ (CGFloat)calculateItemSizeByWidth:(CGFloat)width andNumberOfRow:(NSInteger)column
+{
+    return (width - PDTSimpleCalendarFlowLayoutInsetLeft - PDTSimpleCalendarFlowLayoutInsetRight) / column;
 }
 
 #pragma mark - Calendar calculations
@@ -569,6 +579,11 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
     }
     
     return nil;
+}
+
++ (CGFloat)suggestedHeightForWidth:(CGFloat) width withHeaderHeight:(CGFloat)headerHeight
+{
+    return headerHeight + width * ROW_NUMBER_IN_SECTION / DAYS_PER_WEEK + PDTSimpleCalendarFlowLayoutHeaderHeight + PDTSimpleCalendarFlowLayoutInsetTop + PDTSimpleCalendarFlowLayoutInsetBottom;
 }
 
 @end

@@ -211,9 +211,12 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
     [self reloadItemsAtIndexPaths:@[ indexPath ]];
     
     // Notify the delegate
-//    if ([self.delegate respondsToSelector:@selector(simpleCalendarViewController:didSelectDate:)]) {
-//        [self.delegate simpleCalendarViewController:self didSelectDate:self.selectedDate];
-//    }
+    if ([self.delegate respondsToSelector:@selector(simpleCalendarView:didSelectDate:)]) {
+        [self.delegate simpleCalendarView:self didSelectDate:self.selectedDate];
+    }
+    if ([self.calendarDelegate respondsToSelector:@selector(simpleCalendarView:didSelectDate:)]) {
+        [self.calendarDelegate simpleCalendarView:self didSelectDate:self.calendarDelegate];
+    }
 }
 
 - (void)setMarkedDates:(NSArray *)markedDates
@@ -340,8 +343,11 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
         [cell setDate:cellDate calendar:self.calendar];
         
         //Ask the delegate if this date should have specific colors.
-        if ([self.delegate respondsToSelector:@selector(simpleCalendarViewController:shouldUseCustomColorsForDate:)]) {
-            isCustomDate = [self.delegate simpleCalendarViewController:self shouldUseCustomColorsForDate:cellDate];
+        if ([self.delegate respondsToSelector:@selector(simpleCalendarView:shouldUseCustomColorsForDate:)]) {
+            isCustomDate = [self.delegate simpleCalendarView:self shouldUseCustomColorsForDate:cellDate];
+        }
+        if ([self.calendarDelegate respondsToSelector:@selector(simpleCalendarView:shouldUseCustomColorsForDate:)]) {
+            isCustomDate = [self.calendarDelegate simpleCalendarView:self shouldUseCustomColorsForDate:cellDate];
         }
         
         
@@ -469,8 +475,12 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
             return NO;
         }
     
-        if ([self.delegate respondsToSelector:@selector(simpleCalendarViewController:isEnabledDate:)]) {
-            return [self.delegate simpleCalendarViewController:self isEnabledDate:date];
+        if ([self.delegate respondsToSelector:@selector(simpleCalendarView:isEnabledDate:)]) {
+            return [self.delegate simpleCalendarView:self isEnabledDate:date];
+        }
+        
+        if ([self.calendarDelegate respondsToSelector:@selector(simpleCalendarView:isEnabledDate:)]) {
+            return [self.calendarDelegate simpleCalendarView:self isEnabledDate:date];
         }
         return YES;
     }
@@ -484,20 +494,6 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
     
     return NO;
 }
-
-//- (BOOL)isEnabledDate:(NSDate *)date
-//{
-//    NSDate *clampedDate = [self clampDate:date toComponents:(NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit)];
-//    if (([clampedDate compare:self.firstDate] == NSOrderedAscending) || ([clampedDate compare:self.lastDate] == NSOrderedDescending)) {
-//        return NO;
-//    }
-//    
-//    if ([self.delegate respondsToSelector:@selector(simpleCalendarViewController:isEnabledDate:)]) {
-//        return [self.delegate simpleCalendarViewController:self isEnabledDate:date];
-//    }
-//    
-//    return YES;
-//}
 
 - (BOOL)clampAndCompareDate:(NSDate *)date withReferenceDate:(NSDate *)referenceDate
 {
@@ -565,8 +561,11 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
     }
     
     //Otherwise we ask the delegate
-    if ([self.delegate respondsToSelector:@selector(simpleCalendarViewController:shouldUseCustomColorsForDate:)]) {
-        return [self.delegate simpleCalendarViewController:self shouldUseCustomColorsForDate:date];
+    if ([self.delegate respondsToSelector:@selector(simpleCalendarView:shouldUseCustomColorsForDate:)]) {
+        return [self.delegate simpleCalendarView:self shouldUseCustomColorsForDate:date];
+    }
+    if ([self.calendarDelegate respondsToSelector:@selector(simpleCalendarView:shouldUseCustomColorsForDate:)]) {
+        return [self.calendarDelegate simpleCalendarView:self shouldUseCustomColorsForDate:date];
     }
     
     return NO;
@@ -578,8 +577,11 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
         return cell.circleDefaultColor;
     }
     
-    if ([self.delegate respondsToSelector:@selector(simpleCalendarViewController:circleColorForDate:)]) {
-        return [self.delegate simpleCalendarViewController:self circleColorForDate:date];
+    if ([self.delegate respondsToSelector:@selector(simpleCalendarView:circleColorForDate:)]) {
+        return [self.delegate simpleCalendarView:self circleColorForDate:date];
+    }
+    if ([self.calendarDelegate respondsToSelector:@selector(simpleCalendarView:circleColorForDate:)]) {
+        return [self.calendarDelegate simpleCalendarView:self circleColorForDate:date];
     }
     
     return nil;
@@ -591,8 +593,11 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
         return cell.textDisabledColor;
     }
     
-    if ([self.delegate respondsToSelector:@selector(simpleCalendarViewController:textColorForDate:)]) {
-        return [self.delegate simpleCalendarViewController:self textColorForDate:date];
+    if ([self.delegate respondsToSelector:@selector(simpleCalendarView:textColorForDate:)]) {
+        return [self.delegate simpleCalendarView:self textColorForDate:date];
+    }
+    if ([self.calendarDelegate respondsToSelector:@selector(simpleCalendarView:textColorForDate:)]) {
+        return [self.calendarDelegate simpleCalendarView:self textColorForDate:date];
     }
     
     return nil;

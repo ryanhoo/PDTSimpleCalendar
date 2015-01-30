@@ -72,6 +72,7 @@
  *  @see PDTSimpleCalendarViewDelegate
  */
 @property (nonatomic, weak) id delegate;
+@property (weak, nonatomic) id calendarDelegate;
 
 /** @name Getting Notified of changes */
 
@@ -116,7 +117,7 @@
  *
  *  @return YES if the calendar can select the specified date, NO otherwise.
  */
-- (BOOL)simpleCalendarViewController:(PDTSimpleCalendarCollectionView *)controller isEnabledDate:(NSDate *)date;
+- (BOOL)simpleCalendarView:(PDTSimpleCalendarCollectionView *)calendar isEnabledDate:(NSDate *)date;
 
 /**
  *  Tells the delegate that a date was selected by the user.
@@ -124,7 +125,7 @@
  *  @param controller the calendarView Controller
  *  @param date       the date being selected (Midnight GMT).
  */
-- (void)simpleCalendarViewController:(PDTSimpleCalendarCollectionView *)controller didSelectDate:(NSDate *)date;
+- (void)simpleCalendarView:(PDTSimpleCalendarCollectionView *)calendar didSelectDate:(NSDate *)date;
 
 /** @name Color Customization */
 
@@ -136,7 +137,7 @@
  *
  *  @return YES if the calendar must ask the delegate for text and circle color, NO if it should use default values.
  */
-- (BOOL)simpleCalendarViewController:(PDTSimpleCalendarCollectionView *)controller shouldUseCustomColorsForDate:(NSDate *)date;
+- (BOOL)simpleCalendarView:(PDTSimpleCalendarCollectionView *)calendar shouldUseCustomColorsForDate:(NSDate *)date;
 
 /**
  *  Asks the delegate for the circle color for a custom added date
@@ -144,7 +145,7 @@
  *  @param controller the calendarView Controller
  *  @param date       the date (Midnight GMT)
  */
-- (UIColor *)simpleCalendarViewController:(PDTSimpleCalendarCollectionView *)controller circleColorForDate:(NSDate *)date;
+- (UIColor *)simpleCalendarView:(PDTSimpleCalendarCollectionView *)calendar circleColorForDate:(NSDate *)date;
 
 /**
  *  Asks the delegate for the text color for a custom added date
@@ -152,6 +153,6 @@
  *  @param controller the calendarView Controller
  *  @param date       the date (Midnight GMT)
  */
-- (UIColor *)simpleCalendarViewController:(PDTSimpleCalendarCollectionView *)controller textColorForDate:(NSDate *)date;
+- (UIColor *)simpleCalendarView:(PDTSimpleCalendarCollectionView *)calendar textColorForDate:(NSDate *)date;
 
 @end;

@@ -14,7 +14,7 @@
 
 @protocol PDTSimpleCalendarCollectionViewDelegate;
 
-@interface PDTSimpleCalendarCollectionView : UICollectionView <UICollectionViewDataSource>
+@interface PDTSimpleCalendarCollectionView : UICollectionView <UICollectionViewDelegate, UICollectionViewDataSource>
 
 /** @name Calendar Setup */
 
@@ -71,8 +71,8 @@
  *
  *  @see PDTSimpleCalendarViewDelegate
  */
-@property (nonatomic, weak) id delegate;
-@property (weak, nonatomic) id calendarDelegate;
+//@property (nonatomic, weak) id delegate;
+@property (weak, nonatomic) id<PDTSimpleCalendarCollectionViewDelegate> calendarDelegate;
 
 /** @name Getting Notified of changes */
 

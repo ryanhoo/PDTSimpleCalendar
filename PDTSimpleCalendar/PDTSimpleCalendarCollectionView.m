@@ -18,8 +18,6 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
 
 @interface PDTSimpleCalendarCollectionView () <PDTSimpleCalendarViewCellDelegate>
 
-//@property (nonatomic, strong) PDTSimpleCalendarWeekDayView *weekDaysView;
-//@property (nonatomic, strong) UILabel *overlayView;
 @property (nonatomic, strong) NSDateFormatter *headerDateFormatter; //Will be used to format date in header view and on scroll.
 
 // First and last date of the months based on the public properties first & lastDate
@@ -57,7 +55,7 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
         // Custom initialization
         [self simpleCalendarCommonInit:nil];
     }
-    
+
     return self;
 }
 
@@ -89,7 +87,7 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
     if (layout == nil) {
         layout = [[PDTSimpleCalendarViewFlowLayout alloc] init];
     }
-//    self.weekDaysView = [[PDTSimpleCalendarWeekDayView alloc] initWithFrame:CGRectMake(PDTSimpleCalendarFlowLayoutInsetLeft, 0, [self bounds].size.width, 30)];
+
     self.backgroundColor = [UIColor whiteColor];
     self.overlayTextColor = [UIColor darkGrayColor];
     self.daysPerWeek = 7;
@@ -97,13 +95,10 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
     //Configure the Collection View
     [self registerClass:[PDTSimpleCalendarViewCell class] forCellWithReuseIdentifier:PDTSimpleCalendarViewCellIdentifier];
     [self registerClass:[PDTSimpleCalendarViewHeader class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:PDTSimpleCalendarViewHeaderIdentifier];
-    
+
     self.delegate = self;
     self.dataSource = self;
     [self setBackgroundColor:self.backgroundColor];
-    
-
-//    [self addSubview:self.weekDaysView];
 }
 
 - (NSDateFormatter *)headerDateFormatter;
@@ -111,7 +106,7 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
     if (!_headerDateFormatter) {
         _headerDateFormatter = [[NSDateFormatter alloc] init];
         _headerDateFormatter.calendar = self.calendar;
-        _headerDateFormatter.dateFormat = [NSDateFormatter dateFormatFromTemplate:@"yyyy LLLL" options:0 locale:self.calendar.locale];
+        _headerDateFormatter.dateFormat = @"yyyy年M月";
     }
     return _headerDateFormatter;
 }
@@ -209,13 +204,9 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
     
     NSIndexPath *indexPath = [self indexPathForCellAtDate:_selectedDate];
     [self reloadItemsAtIndexPaths:@[ indexPath ]];
-    
-    // Notify the delegate
-    if ([self.delegate respondsToSelector:@selector(simpleCalendarView:didSelectDate:)]) {
-        [self.delegate simpleCalendarView:self didSelectDate:self.selectedDate];
-    }
+
     if ([self.calendarDelegate respondsToSelector:@selector(simpleCalendarView:didSelectDate:)]) {
-        [self.calendarDelegate simpleCalendarView:self didSelectDate:self.calendarDelegate];
+        [self.calendarDelegate simpleCalendarView:self didSelectDate:self.selectedDate];
     }
 }
 
@@ -341,11 +332,7 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
         isDisabled = ![self isEnabledDate:cellDate];
         
         [cell setDate:cellDate calendar:self.calendar];
-        
-        //Ask the delegate if this date should have specific colors.
-        if ([self.delegate respondsToSelector:@selector(simpleCalendarView:shouldUseCustomColorsForDate:)]) {
-            isCustomDate = [self.delegate simpleCalendarView:self shouldUseCustomColorsForDate:cellDate];
-        }
+
         if ([self.calendarDelegate respondsToSelector:@selector(simpleCalendarView:shouldUseCustomColorsForDate:)]) {
             isCustomDate = [self.calendarDelegate simpleCalendarView:self shouldUseCustomColorsForDate:cellDate];
         }
@@ -406,15 +393,9 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
 {
     if (kind == UICollectionElementKindSectionHeader) {
-        PDTSimpleCalendarViewHeader *headerView = nil;
-        
-        headerView = [self dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:PDTSimpleCalendarViewHeaderIdentifier forIndexPath:indexPath];
+        PDTSimpleCalendarViewHeader *headerView = [self dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:PDTSimpleCalendarViewHeaderIdentifier forIndexPath:indexPath];
         headerView.titleLabel.text = [self.headerDateFormatter stringFromDate:[self firstOfMonthForSection:indexPath.section]].uppercaseString;
-        
-        NSDate *month = [self firstOfMonthForSection:indexPath.section];
-        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-        formatter.dateFormat = @"yyyy年M月";
-        headerView.titleLabel.text = [formatter stringFromDate:month];
+
         headerView.layer.shouldRasterize = YES;
         headerView.layer.rasterizationScale = [UIScreen mainScreen].scale;
         
@@ -474,11 +455,7 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
         if (([clampedDate compare:self.firstDate] == NSOrderedAscending) || ([clampedDate compare:self.lastDate] == NSOrderedDescending)) {
             return NO;
         }
-    
-        if ([self.delegate respondsToSelector:@selector(simpleCalendarView:isEnabledDate:)]) {
-            return [self.delegate simpleCalendarView:self isEnabledDate:date];
-        }
-        
+
         if ([self.calendarDelegate respondsToSelector:@selector(simpleCalendarView:isEnabledDate:)]) {
             return [self.calendarDelegate simpleCalendarView:self isEnabledDate:date];
         }
@@ -510,7 +487,7 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
     NSDateComponents *offset = [NSDateComponents new];
     offset.month = section;
     
-    return [self.calendar dateByAddingComponents:offset toDate:self.firstDateMonth options:NSWrapCalendarComponents];
+    return [self.calendar dateByAddingComponents:offset toDate:self.firstDateMonth options:0];
 }
 
 - (NSInteger)sectionForDate:(NSDate *)date
@@ -561,9 +538,6 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
     }
     
     //Otherwise we ask the delegate
-    if ([self.delegate respondsToSelector:@selector(simpleCalendarView:shouldUseCustomColorsForDate:)]) {
-        return [self.delegate simpleCalendarView:self shouldUseCustomColorsForDate:date];
-    }
     if ([self.calendarDelegate respondsToSelector:@selector(simpleCalendarView:shouldUseCustomColorsForDate:)]) {
         return [self.calendarDelegate simpleCalendarView:self shouldUseCustomColorsForDate:date];
     }
@@ -576,10 +550,7 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
     if (![self isEnabledDate:date]) {
         return cell.circleDefaultColor;
     }
-    
-    if ([self.delegate respondsToSelector:@selector(simpleCalendarView:circleColorForDate:)]) {
-        return [self.delegate simpleCalendarView:self circleColorForDate:date];
-    }
+
     if ([self.calendarDelegate respondsToSelector:@selector(simpleCalendarView:circleColorForDate:)]) {
         return [self.calendarDelegate simpleCalendarView:self circleColorForDate:date];
     }
@@ -592,10 +563,7 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
     if (![self isEnabledDate:date]) {
         return cell.textDisabledColor;
     }
-    
-    if ([self.delegate respondsToSelector:@selector(simpleCalendarView:textColorForDate:)]) {
-        return [self.delegate simpleCalendarView:self textColorForDate:date];
-    }
+
     if ([self.calendarDelegate respondsToSelector:@selector(simpleCalendarView:textColorForDate:)]) {
         return [self.calendarDelegate simpleCalendarView:self textColorForDate:date];
     }

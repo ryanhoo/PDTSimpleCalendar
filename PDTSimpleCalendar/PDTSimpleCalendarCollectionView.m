@@ -13,8 +13,6 @@
 #import "PDTSimpleCalendarWeekDayView.h"
 #import "PDTSimpleCalendarViewHeaderWithWeekDays.h"
 
-const CGFloat PDTSimpleCalendarOverlaySize = 14.0f;
-
 static NSString *PDTSimpleCalendarViewCellIdentifier = @"com.producteev.collection.cell.identifier";
 static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collection.header.identifier";
 
@@ -465,8 +463,17 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
 
 - (BOOL)isEnabledDate:(NSDate *)date
 {
-    if (self.defaultDateEnabled)
+    if (self.defaultDateEnabled) {
+        NSDate *clampedDate = [self clampDate:date toComponents:(NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit)];
+        if (([clampedDate compare:self.firstDate] == NSOrderedAscending) || ([clampedDate compare:self.lastDate] == NSOrderedDescending)) {
+            return NO;
+        }
+    
+        if ([self.delegate respondsToSelector:@selector(simpleCalendarViewController:isEnabledDate:)]) {
+            return [self.delegate simpleCalendarViewController:self isEnabledDate:date];
+        }
         return YES;
+    }
     if (self.enabledDates) {
         for (NSDate *enabledDate in self.enabledDates) {
             if ([self clampAndCompareDate:enabledDate withReferenceDate:date]) {

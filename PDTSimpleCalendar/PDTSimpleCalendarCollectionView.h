@@ -74,6 +74,9 @@
 //@property (nonatomic, weak) id delegate;
 @property (weak, nonatomic) id<PDTSimpleCalendarCollectionViewDelegate> calendarDelegate;
 
+// ugly patch method
+- (void)setSelectedDate:(NSDate *)newSelectedDate callDelegate:(BOOL)callOrNot;
+
 /** @name Getting Notified of changes */
 
 /**

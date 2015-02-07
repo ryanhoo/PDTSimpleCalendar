@@ -183,7 +183,12 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
     return [self.calendar dateFromComponents:components];
 }
 
-- (void)setSelectedDate:(NSDate *)newSelectedDate
+- (void)setSelectedDate:(NSDate *)selectedDate
+{
+	[self setSelectedDate:selectedDate callDelegate:YES];
+}
+
+- (void)setSelectedDate:(NSDate *)newSelectedDate callDelegate:(BOOL)callOrNot
 {
     //if newSelectedDate is nil, unselect the current selected cell
     if (!newSelectedDate) {
@@ -208,7 +213,7 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
     NSIndexPath *indexPath = [self indexPathForCellAtDate:_selectedDate];
     [self reloadItemsAtIndexPaths:@[ indexPath ]];
 
-    if ([self.calendarDelegate respondsToSelector:@selector(simpleCalendarView:didSelectDate:)]) {
+    if (callOrNot && [self.calendarDelegate respondsToSelector:@selector(simpleCalendarView:didSelectDate:)]) {
         [self.calendarDelegate simpleCalendarView:self didSelectDate:self.selectedDate];
     }
 }

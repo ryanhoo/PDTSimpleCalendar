@@ -307,13 +307,12 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-//    NSDate *firstOfMonth = [self firstOfMonthForSection:section];
-//    NSRange rangeOfWeeks = [self.calendar rangeOfUnit:NSWeekCalendarUnit inUnit:NSMonthCalendarUnit forDate:firstOfMonth];
-    
+    NSDate *firstOfMonth = [self firstOfMonthForSection:section];
+    NSRange rangeOfWeeks = [self.calendar rangeOfUnit:NSWeekCalendarUnit inUnit:NSMonthCalendarUnit forDate:firstOfMonth];
+	
     //We need the number of calendar weeks for the full months (it will maybe include previous month and next months cells)
-//    NSInteger rows = (rangeOfWeeks.length * self.daysPerWeek);
-//    NSLog(@"the row number is %lu", rows);
-    return self.daysPerWeek * ROW_NUMBER_IN_SECTION;
+    NSInteger numberOfItems = (rangeOfWeeks.length * self.daysPerWeek);
+    return numberOfItems;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
@@ -327,7 +326,23 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
     
     NSDateComponents *cellDateComponents = [self.calendar components:NSDayCalendarUnit|NSMonthCalendarUnit fromDate:cellDate];
     NSDateComponents *firstOfMonthsComponents = [self.calendar components:NSMonthCalendarUnit fromDate:firstOfMonth];
-    
+	
+//	if (YES) {
+//		if (cellDateComponents.month == firstOfMonthsComponents.month) {
+//			[cell setDate:cellDate calendar:self.calendar];
+//
+//			cell.hidden = NO;
+//			return cell;
+//		} else {
+//			[cell setDate:cellDate calendar:self.calendar];
+//			//        [cell setDate:nil calendar:nil];
+//			[cell setIsDisabled:YES];
+//			
+//			cell.hidden = YES;
+//			return cell;
+//		}
+//	}
+	
     BOOL isToday = NO;
     BOOL isSelected = NO;
     BOOL isCustomDate = NO;
@@ -344,27 +359,19 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
 
         if ([self.calendarDelegate respondsToSelector:@selector(simpleCalendarView:shouldUseCustomColorsForDate:)]) {
             isCustomDate = [self.calendarDelegate simpleCalendarView:self shouldUseCustomColorsForDate:cellDate];
-        }
-        
-        
+		}
+		
+		if (isToday) {
+			[cell setIsToday:isToday];
+		}
+		[cell setSelected:isSelected];
+		[cell setIsMarked:isMarked];
+		[cell setIsDisabled:isDisabled];
+		
+		cell.hidden = NO;
     } else {
-                [cell setDate:cellDate calendar:self.calendar];
-//        [cell setDate:nil calendar:nil];
-        [cell setIsDisabled:YES];
+		cell.hidden = YES;
     }
-    
-    if (isToday) {
-        [cell setIsToday:isToday];
-    }
-    
-//    if (isSelected) {
-        [cell setSelected:isSelected];
-//    }
-    
-//    if (isMarked) {
-        [cell setIsMarked:isMarked];
-//    }
-    [cell setIsDisabled:isDisabled];
     
     //If the current Date is not enabled, or if the delegate explicitely specify custom colors
     if (![self isEnabledDate:cellDate] || isCustomDate) {
@@ -373,8 +380,6 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
     
     //We rasterize the cell for performances purposes.
     //The circle background is made using roundedCorner which is a super expensive operation, specially with a lot of items on the screen to display (like we do)
-    cell.layer.shouldRasterize = YES;
-    cell.layer.rasterizationScale = [UIScreen mainScreen].scale;
     return cell;
 }
 

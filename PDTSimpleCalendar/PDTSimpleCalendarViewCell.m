@@ -184,6 +184,15 @@ const CGFloat PDTSimpleCalendarCircleSize = 32.0f;
 }
 
 
+#pragma mark - awakeFromNib
+
+- (void)awakeFromNib
+{
+	[super awakeFromNib];
+	self.layer.shouldRasterize = YES;
+	self.layer.rasterizationScale = [UIScreen mainScreen].scale;
+}
+
 #pragma mark - Prepare for Reuse
 
 - (void)prepareForReuse

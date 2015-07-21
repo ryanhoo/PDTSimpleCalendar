@@ -326,23 +326,7 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
     
     NSDateComponents *cellDateComponents = [self.calendar components:NSDayCalendarUnit|NSMonthCalendarUnit fromDate:cellDate];
     NSDateComponents *firstOfMonthsComponents = [self.calendar components:NSMonthCalendarUnit fromDate:firstOfMonth];
-	
-//	if (YES) {
-//		if (cellDateComponents.month == firstOfMonthsComponents.month) {
-//			[cell setDate:cellDate calendar:self.calendar];
-//
-//			cell.hidden = NO;
-//			return cell;
-//		} else {
-//			[cell setDate:cellDate calendar:self.calendar];
-//			//        [cell setDate:nil calendar:nil];
-//			[cell setIsDisabled:YES];
-//			
-//			cell.hidden = YES;
-//			return cell;
-//		}
-//	}
-	
+
     BOOL isToday = NO;
     BOOL isSelected = NO;
     BOOL isCustomDate = NO;
@@ -367,7 +351,8 @@ static NSString *PDTSimpleCalendarViewHeaderIdentifier = @"com.producteev.collec
 		[cell setSelected:isSelected];
 		[cell setIsMarked:isMarked];
 		[cell setIsDisabled:isDisabled];
-		
+
+        [cell refreshCellColors];
 		cell.hidden = NO;
     } else {
 		cell.hidden = YES;

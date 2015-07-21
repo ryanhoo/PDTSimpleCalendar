@@ -109,25 +109,21 @@ const CGFloat PDTSimpleCalendarCircleSize = 32.0f;
 - (void)setIsToday:(BOOL)isToday
 {
     _isToday = isToday;
-    [self setCircleColor:isToday selected:self.selected marked:self.isMarked disabled:self.isDisabled];
 }
 
 - (void)setIsMarked:(BOOL)isMarked
 {
     _isMarked = isMarked;
-    [self setCircleColor:self.isToday selected:self.selected marked:isMarked disabled:self.isDisabled];
 }
 
 - (void)setIsDisabled:(BOOL)isDisabled
 {
     _isDisabled = isDisabled;
-    [self setCircleColor:self.isToday selected:self.selected marked:self.isMarked disabled:isDisabled];
 }
 
 - (void)setSelected:(BOOL)selected
 {
     [super setSelected:selected];
-    [self setCircleColor:self.isToday selected:self.selected marked:self.isMarked disabled:self.isDisabled];
 }
 
 - (void)setCircleColor:(BOOL)today selected:(BOOL)selected marked:(BOOL)marked disabled:(BOOL)disabled
@@ -148,16 +144,7 @@ const CGFloat PDTSimpleCalendarCircleSize = 32.0f;
         }
     }
 
-//    if (selected) {
-//        circleColor = [self circleSelectedColor];
-//        labelColor = [self textSelectedColor];
-//    }
-//
-//    if (today) {
-//        circleColor =  [self circleTodayColor];
-//        labelColor = [self textTodayColor];
-//    } else
-        if (selected) {
+    if (selected) {
         circleColor =  [self circleSelectedColor];
         labelColor = [self textSelectedColor];
     } else if (marked){
@@ -167,16 +154,10 @@ const CGFloat PDTSimpleCalendarCircleSize = 32.0f;
         circleColor = [UIColor clearColor];
         labelColor = [self textDisabledColor];
     }
-//    
-//    else {
-//        circleColor = [self circleDefaultColor];
-//        labelColor = [self textDefaultColor];
-//    }
-    
+
     [self.dayLabel setBackgroundColor:circleColor];
     [self.dayLabel setTextColor:labelColor];
 }
-
 
 - (void)refreshCellColors
 {
